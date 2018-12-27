@@ -2,7 +2,8 @@
         :std/format
         :std/net/repl
         :std/sugar
-        :std/srfi/1)
+        :std/srfi/1
+        :thunknyc/apropos)
 
 (export start-treadmill!
         eval-string/input-string)
