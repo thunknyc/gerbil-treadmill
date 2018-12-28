@@ -55,7 +55,7 @@
        (fold (lambda (result accum)
                (with (([rvals rout rerr] result)
                       ([avals aout aerr] accum))
-                 (list (append avals rvals)
+                 (list (append avals (map (cut format "~S" <>) rvals))
                        (string-append aout rout)
                        (string-append aerr rerr))))
              '(() "" "")
