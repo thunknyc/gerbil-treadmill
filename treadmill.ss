@@ -80,9 +80,24 @@
                      (cadar matches))))
     (sort-by-length names)))
 
-(def (completion-meta str)
+(def (name-entry name)
   (let* ((db (current-apropos-db))
-         (entry (hash-ref db 'names (hash)))
-         (module-entries (hash-ref entry (string->symbol str) '())))
-    (sort-by-length (map (lambda (el) (symbol->string (car el)))
-                         module-entries))))
+         (entry (hash-ref db 'names (hash))))
+    (hash-ref entry (string->symbol name) '())))
+
+(def (entry-type entry)
+  (let ((final (last entry)))
+    (if (symbol? final) final (last final))))
+
+(def (entry-string entry)
+  (let ((t (entry-type entry)))
+    (string-ref (symbol->string t) 0)))
+
+(def (meta-entry entry)
+  (let ((mod-name (car entry))
+        (type-string (entry-string entry)))
+    (format "~A<~A>" mod-name type-string)))
+
+(def (completion-meta name)
+  (let ((entry (name-entry name)))
+    (sort-by-length (map meta-entry entry))))
