@@ -6,7 +6,9 @@
         :thunknyc/apropos)
 
 (export start-treadmill!
-        eval-string/input-string)
+        eval-string/input-string
+        complete
+        completion-meta)
 
 (def (start-treadmill!)
   (let* ((s (start-repl-server! address: "127.0.0.1:0"))
@@ -62,3 +64,24 @@
              result-sets)))
    (catch (e)
      '(() "" "*** ERROR EOF reached while reading\n"))))
+
+(def (sort-by-length lis)
+  (sort lis (lambda (a b)
+              (let ((la (string-length a))
+                    (lb (string-length b)))
+                (if (= la lb)
+                  (string<? a b)
+                  (< la lb))))))
+
+(def (complete str)
+  (let* ((matches (apropos-re str))
+         (names (map (lambda (el) (symbol->string (car el)))
+                     (cadar matches))))
+    (sort-by-length names)))
+
+(def (completion-meta str)
+  (let* ((db (current-apropos-db))
+         (entry (hash-ref db 'names (hash)))
+         (module-entries (hash-ref entry (string->symbol str) '())))
+    (sort-by-length (map (lambda (el) (symbol->string (car el)))
+                         module-entries))))
