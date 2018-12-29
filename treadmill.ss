@@ -1,8 +1,9 @@
 (import :gerbil/gambit
         :std/format
         :std/net/repl
-        :std/sugar
+        :std/sort
         :std/srfi/1
+        :std/sugar
         :thunknyc/apropos)
 
 (export start-treadmill!
