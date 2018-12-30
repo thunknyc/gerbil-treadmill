@@ -8,6 +8,7 @@
 
 (export start-treadmill!
         eval-string/input-string
+        eval/input
         complete
         completion-meta)
 
@@ -20,22 +21,28 @@
     (_gx#load-expander!)
     (thread-join! s)))
 
-(def (eval/input e p)
+(def (eval/input e p (mod #f))
   (let ((out (open-output-string))
         (err (open-output-string)))
-    (parameterize ((current-input-port p)
+    (parameterize ((current-input-port (or p (current-input-port)))
                    (current-output-port out)
                    (current-error-port err))
-      (let (result (call-with-values
-                       (lambda ()
-                         (try
-                          (eval e)
-                          (catch (e)
-                            (eprintf "*** ERROR ~A ~A ~S\n"
-                                     (error-message e)
-                                     (error-trace e)
-                                     (error-irritants e)))))
-                     (lambda vals vals)))
+      (let (result
+            (call-with-values
+                (lambda ()
+                  (try
+                   (if mod
+                     (parameterize
+                         ((gx#current-expander-context
+                           (gx#import-module mod #f #f)))
+                       (eval e))
+                     (eval e))
+                   (catch (e)
+                     (eprintf "*** ERROR ~A ~A ~S\n"
+                              (error-message e)
+                              (error-trace e)
+                              (error-irritants e)))))
+              (lambda vals vals)))
         `(,result
           ,(get-output-string out)
           ,(get-output-string err))))))
@@ -50,11 +57,11 @@
      (catch (e)
        (error "Error while reading -- check for an incomplete form.")))))
 
-(def (eval-string/input-string e-s i-s)
+(def (eval-string/input-string e-s i-s (mod #f))
   (try
    (let* ((exprs (read-string e-s))
           (input (open-input-string i-s)))
-     (let (result-sets (map (cut eval/input <> input) exprs))
+     (let (result-sets (map (cut eval/input <> input mod) exprs))
        (fold (lambda (result accum)
                (with (([rvals rout rerr] result)
                       ([avals aout aerr] accum))
