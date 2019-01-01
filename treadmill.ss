@@ -21,6 +21,12 @@
     (_gx#load-expander!)
     (thread-join! s)))
 
+(def (module-context mod)
+  (try
+   (gx#import-module mod #f #f)
+   (catch (e)
+     (error "Module does not exist." mod))))
+
 (def (eval/input e p (mod #f))
   (let ((out (open-output-string))
         (err (open-output-string)))
@@ -34,14 +40,15 @@
                    (if mod
                      (parameterize
                          ((gx#current-expander-context
-                           (gx#import-module mod #f #f)))
+                           (module-context mod)))
                        (eval e))
                      (eval e))
                    (catch (e)
                      (eprintf "*** ERROR ~A ~A ~S\n"
                               (error-message e)
                               (error-trace e)
-                              (error-irritants e)))))
+                              (error-irritants e))
+                     (format "Error: %s" (error-message e)))))
               (lambda vals vals)))
         `(,result
           ,(get-output-string out)
@@ -71,7 +78,7 @@
              '(() "" "")
              result-sets)))
    (catch (e)
-     '(() "" "*** ERROR EOF reached while reading\n"))))
+     '(() "" "*** ERROR EOF reached while reading.\n"))))
 
 (def (sort-by-length lis)
   (sort lis (lambda (a b)
