@@ -78,8 +78,8 @@
              '(() "" "")
              result-sets)))
    (catch (e)
-     '(() ""
-       (format "*** ERROR ~S ~S ~S\n"
+     `(() ""
+       ,(format "*** ERROR ~S ~S ~S\n"
                (error-message e) (error-irritants e) (error-trace e))))))
 
 (def (sort-by-length lis)
