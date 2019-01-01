@@ -44,11 +44,10 @@
                        (eval e))
                      (eval e))
                    (catch (e)
-                     (eprintf "*** ERROR ~A ~A ~S\n"
+                     (eprintf "Message: ~A\nIrritants: ~A\nTrace: ~S\n"
                               (error-message e)
-                              (error-trace e)
-                              (error-irritants e))
-                     (format "Error: ~S" (error-message e)))))
+                              (error-irritants e)
+                              (error-trace e)))))
               (lambda vals vals)))
         `(,result
           ,(get-output-string out)
@@ -62,7 +61,7 @@
          (if (eof-object? val) (reverse! vs)
              (lp (cons val vs) (read)))))
      (catch (e)
-       (error "Error while reading -- check for an incomplete form.")))))
+       (error "Reading form failed -- check for an completeness.")))))
 
 (def (eval-string/input-string e-s i-s (mod #f))
   (try
@@ -79,7 +78,7 @@
              result-sets)))
    (catch (e)
      `(() ""
-       ,(format "*** ERROR ~S ~S ~S\n"
+       ,(format "Message: ~S\nIrritants: ~S\nTrace:~S\n"
                (error-message e) (error-irritants e) (error-trace e))))))
 
 (def (sort-by-length lis)
