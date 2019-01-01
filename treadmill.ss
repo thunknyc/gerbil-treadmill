@@ -48,7 +48,7 @@
                               (error-message e)
                               (error-trace e)
                               (error-irritants e))
-                     (format "Error: %s" (error-message e)))))
+                     (format "Error: ~S" (error-message e)))))
               (lambda vals vals)))
         `(,result
           ,(get-output-string out)
