@@ -78,7 +78,9 @@
              '(() "" "")
              result-sets)))
    (catch (e)
-     '(() "" "*** ERROR EOF reached while reading.\n"))))
+     '(() ""
+       (format "*** ERROR ~S ~S ~S\n"
+               (error-message e) (error-irritants e) (error-trace e))))))
 
 (def (sort-by-length lis)
   (sort lis (lambda (a b)
