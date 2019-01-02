@@ -15,7 +15,13 @@
         complete
         completion-meta
         uuid->string
-        random-uuid)
+        random-uuid
+        ;;
+        reload-module!
+        reload! reload
+        enter-module!
+        @expand @expand1
+        )
 
 (def (start-treadmill!)
   (let* ((s (start-repl-server! address: "127.0.0.1:0"))
@@ -128,3 +134,62 @@
 (def (completion-meta name)
   (let ((entry (name-entry name)))
     (sort-by-length (map meta-entry entry))))
+
+;;;; SHAMELESSLY STOLEN FROM src/gerbil/interactive/init.ss
+
+;;; (C) vyzo at hackzen.org
+;;; Gerbil interactive environment initialization
+
+;; Interactive development utilities
+;; Module reloading
+(begin-syntax
+  (def (reload-module! mod)
+    (cond
+     ((string? mod)                     ; file path, resource it
+      (import-module mod #t #t))
+     ((symbol? mod)
+      (let (str (symbol->string mod))
+        (cond
+         ((string-empty? str)
+          (error "Invalid module path" mod))
+         ((eq? (string-ref str 0) #\:)  ; library module
+          (parameterize ((_gx#reload-module #t))
+            (import-module mod #t #t)))
+         (else                          ; top module
+          (void)))))
+     (else
+      (error "Invalid module path" mod)))))
+
+(defsyntax (reload! stx)
+  (syntax-case stx ()
+    ((_ mod)
+     (begin
+       (reload-module! (stx-e #'mod))
+       #'(import mod)))))
+
+(defrules reload ()
+  ((_ mod ...)
+   (begin (reload! mod) ...)))
+
+(defrules enter! ()
+  ((_ mod)
+   (enter-module! 'mod)))
+
+;; Macro expansion
+;; These two macros expand a form, pretty print the expansion, and
+;; return a quoted syntax of the expansion for debugging purposes.
+;; @expand uses core-expand* while @expand1 performs a single step
+;; expansion with core-expand1
+(defsyntax (@expand stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((expr* (gx#core-expand* #'expr)))
+       (pretty-print (syntax->datum #'expr*))
+       #'(quote-syntax expr*)))))
+
+(defsyntax (@expand1 stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((expr* (gx#core-expand1 #'expr)))
+       (pretty-print (syntax->datum #'expr*))
+       #'(quote-syntax expr*)))))
