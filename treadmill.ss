@@ -35,7 +35,7 @@
   ((_ form)
    (let (sentinel (uuid->string (random-uuid)))
      (printf "|~A|" sentinel)
-     (let (result (eval form))
+     (let (result (eval 'form))
        (printf "~S|~A|\r\n" result sentinel)))))
 
 (def (eval/input e p (mod #f))
