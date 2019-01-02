@@ -1,5 +1,6 @@
 (import :gerbil/gambit
         :std/format
+        :std/misc/uuid
         :std/net/repl
         :std/sort
         :std/srfi/1
@@ -11,7 +12,9 @@
         eval/input
         eval/sentinel
         complete
-        completion-meta)
+        completion-meta
+        uuid->string
+        random-uuid)
 
 (def (start-treadmill!)
   (let* ((s (start-repl-server! address: "127.0.0.1:0"))
