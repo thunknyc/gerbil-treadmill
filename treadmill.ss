@@ -73,7 +73,7 @@
          (if (eof-object? val) (reverse! vs)
              (lp (cons val vs) (read)))))
      (catch (e)
-       (error "Reading form failed -- check for an completeness.")))))
+       (error "Reading form failed -- check for completeness.")))))
 
 (def (eval-string/input-string e-s i-s (mod #f))
   (try
