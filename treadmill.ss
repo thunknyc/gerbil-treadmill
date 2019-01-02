@@ -1,7 +1,8 @@
-(import :gerbil/gambit
-        :gerbil/expander
+(import :gerbil/expander
+        :gerbil/gambit
         :scheme/process-context
         :std/format
+        :std/interactive
         :std/misc/uuid
         :std/net/repl
         :std/sort
@@ -16,12 +17,7 @@
         complete
         completion-meta
         uuid->string
-        random-uuid
-        load-interactive-facilities)
-
-(def (load-interactive-facilities)
-  (load (format "~A/lib/init.ss"
-                (get-environment-variable "GERBIL_HOME"))))
+        random-uuid)
 
 (def (start-treadmill!)
   (let* ((s (start-repl-server! address: "127.0.0.1:0"))

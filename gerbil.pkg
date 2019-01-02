@@ -1,2 +1,2 @@
 (package: thunknyc)
-(depends: github.com/thunknyc/apropos)
+(depend: (github.com/thunknyc/apropos))
