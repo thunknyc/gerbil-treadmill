@@ -9,6 +9,7 @@
 (export start-treadmill!
         eval-string/input-string
         eval/input
+        eval/sentinel
         complete
         completion-meta)
 
@@ -26,6 +27,13 @@
    (gx#import-module mod #f #f)
    (catch (e)
      (error "Module does not exist." mod))))
+
+(defrules eval/sentinel ()
+  ((_ form)
+   (let (sentinel (uuid->string (random-uuid)))
+     (printf "|~A|" sentinel)
+     (let (result (eval form))
+       (printf "~S|~A|\r\n" result sentinel)))))
 
 (def (eval/input e p (mod #f))
   (let ((out (open-output-string))
