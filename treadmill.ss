@@ -21,7 +21,7 @@
          (port (socket-info-port-number
                 (tcp-server-socket-info
                  (thread-specific s)))))
-    (printf "Running net repl on port ~A.\n" port)
+    (printf "Running network REPL on port ~A.\n" port)
     (_gx#load-expander!)
     (thread-join! s)))
 
