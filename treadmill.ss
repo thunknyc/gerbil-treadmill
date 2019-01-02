@@ -1,4 +1,5 @@
 (import :gerbil/gambit
+        :gerbil/expander
         :std/format
         :std/misc/uuid
         :std/net/repl
@@ -50,8 +51,8 @@
                   (try
                    (if mod
                      (parameterize
-                         ((gx#current-expander-context
-                           (module-context mod)))
+                         ((current-expander-allow-rebind? #t)
+                          (gx#current-expander-context (module-context mod)))
                        (eval e))
                      (eval e))
                    (catch (e)
