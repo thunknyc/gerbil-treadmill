@@ -58,10 +58,8 @@
                        (eval e))
                      (eval e))
                    (catch (e)
-                     (eprintf "Message: ~A\nIrritants: ~A\nTrace: ~S\n"
-                              (error-message e)
-                              (error-irritants e)
-                              (error-trace e)))))
+                     (eprintf "Message: ~A\n"
+                              (error-message e)))))
               (lambda vals vals)))
         `(,result
           ,(get-output-string out)
@@ -92,8 +90,7 @@
              result-sets)))
    (catch (e)
      `(() ""
-       ,(format "Message: ~S\nIrritants: ~S\nTrace:~S\n"
-               (error-message e) (error-irritants e) (error-trace e))))))
+       ,(format "Message: ~S\n" (error-message e))))))
 
 (def (sort-by-length lis)
   (sort lis (lambda (a b)
