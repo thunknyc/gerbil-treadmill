@@ -21,9 +21,10 @@
         random-uuid)
 
 (def (enter-debugger-on-interrupt!)
-  (##set-debug-settings!
-   (macro-debug-settings-user-intr-mask)
-   (macro-debug-settings-user-intr-repl)))
+  ;; (##set-debug-settings!
+  ;;  (macro-debug-settings-user-intr-mask)
+  ;;  (macro-debug-settings-user-intr-repl))
+  (##set-debug-settings! 1536 0)) ;; this accmplishes the above
 
 (def (start-treadmill!)
   (let* ((s (start-repl-server! address: "127.0.0.1:0"))
